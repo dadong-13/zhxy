@@ -107,43 +107,22 @@ public class SystemController {
 
 
 
-    @ApiOperation("/统一修改头像")
-    @PostMapping("/upload")
-    public Result upload(
-            @ApiParam("文件二进制数据") @RequestPart("multipartFile") MultipartFile multipartFile
-    ) {
-
-        //使用UUID随机生成文件名
-        String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
-        //生成新的文件名字
-        String filename = uuid.concat(multipartFile.getOriginalFilename());
-        //生成文件的保存路径(实际生产环境这里会使用真正的文件存储服务器)
-        String portraitPath = "C:\\bigdata\\component\\IDEA\\IDEA2021.3.3\\Project\\java\\myzhxy\\images".concat(filename);
-        //保存文件
-        try {
-            multipartFile.transferTo(new File(portraitPath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String headerImg ="upload/".concat(filename);
-        return Result.ok(headerImg);
-    }
-
-
 
 
     @ApiOperation("头像上传统一入口")
     @PostMapping("/headerImgUpload")
     public Result headerImgUpload(
-            @ApiParam("文件二进制数据") @RequestPart("multipartFile") MultipartFile multipartFile
+            @ApiParam("上传的图像文件") @RequestPart("multipartFile") MultipartFile multipartFile
     ){
 
         //使用UUID随机生成文件名
         String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
         //生成新的文件名字
-        String filename = uuid.concat(multipartFile.getOriginalFilename());
+        String originalFilename = multipartFile.getOriginalFilename();
+        int i = originalFilename.lastIndexOf(".");
+        String newfilename = uuid.concat(originalFilename.substring(i));
         //生成文件的保存路径(实际生产环境这里会使用真正的文件存储服务器)
-        String portraitPath ="C:\\bigdata\\component\\IDEA\\IDEA2021.3.3\\Project\\java\\myzhxy\\images".concat(filename);
+        String portraitPath ="C:\\bigdata\\component\\IDEA\\IDEA2021.3.3\\Project\\java\\myzhxy\\target\\classes\\public\\upload\\".concat(newfilename);
         //保存文件
         try {
             multipartFile.transferTo(new File(portraitPath));
@@ -151,9 +130,8 @@ public class SystemController {
             e.printStackTrace();
         }
 
-
-        String headerImg ="upload/".concat(filename);
-        return Result.ok(headerImg);
+        String inmagePath ="upload/".concat(newfilename);
+        return Result.ok(inmagePath);
     }
 
 
